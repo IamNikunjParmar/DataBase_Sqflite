@@ -76,100 +76,148 @@ class _ProfessorPageViewState extends State<ProfessorPageView> {
     );
   }
 
+  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<ProfessorBloc, ProfessorState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state.error.isNotEmpty) {
-            return Text(state.error);
-          } else if (state.professorList.isNotEmpty) {
-            return ListView.builder(
-                itemCount: state.professorList.length,
-                itemBuilder: (ctx, index) {
-                  ProfessorModal myProf = state.professorList[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Card(
-                      elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: InkWell(
-                          onTap: () {
-                            context.read<ProfessorBloc>().add(FilterStudentByProfessor(student: myProf.name));
-                            _showStudentListDialog();
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Name: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(myProf.name),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Subject: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(myProf.subject),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Mobile: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(myProf.number),
-                                ],
-                              ),
-                            ],
-                          ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(20),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (val) {
+                      context.read<ProfessorBloc>().add(SearchForProfessor(searchQuery: val));
+                    },
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      labelText: "Search For Professor",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
                     ),
-                  );
-                });
-          } else {
-            return const Center(
-                child: Text(
-              "No Professor",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ));
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.of(context).pushNamed(AddProfessorPage.routeName);
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: BlocBuilder<ProfessorBloc, ProfessorState>(
+          builder: (context, state) {
+            final professors = searchController.text.isEmpty ? state.professorList : state.searchList;
 
-          if (result == true) {
-            context.read<ProfessorBloc>().add(GetProfessor());
-          }
-        },
-        child: const Icon(Icons.add),
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.error.isNotEmpty) {
+              return Text(state.error);
+            } else if (professors.isNotEmpty) {
+              return ListView.builder(
+                  itemCount: professors.length,
+                  itemBuilder: (ctx, index) {
+                    ProfessorModal myProf = professors[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Card(
+                        elevation: 5,
+                        child: Container(
+                          height: 115,
+                          // alignment: Alignment.center,
+                          padding: const EdgeInsets.all(16),
+                          child: InkWell(
+                            onTap: () {
+                              context.read<ProfessorBloc>().add(FilterStudentByProfessor(student: myProf.name));
+                              _showStudentListDialog();
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Name: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(myProf.name),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Subject: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(myProf.subject),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Mobile: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(myProf.number),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+            } else {
+              return const Center(
+                  child: Text(
+                "No Professor",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ));
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final result = await Navigator.of(context).pushNamed(AddProfessorPage.routeName);
+
+            if (result == true) {
+              context.read<ProfessorBloc>().add(GetProfessor());
+            }
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

@@ -28,3 +28,12 @@ class FilterStudentByProfessor extends ProfessorEvent {
   // TODO: implement props
   List<Object?> get props => [student];
 }
+
+class SearchForProfessor extends ProfessorEvent {
+  final String searchQuery;
+
+  SearchForProfessor({required this.searchQuery});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [searchQuery];
+}

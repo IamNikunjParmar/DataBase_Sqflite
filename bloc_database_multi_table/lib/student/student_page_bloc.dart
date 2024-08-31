@@ -12,6 +12,7 @@ class StudentPageBloc extends Bloc<StudentEvent, StudentState> {
     on<DeleteToStudent>(deleteStudent);
     on<UpdateTOStudent>(updateStudent);
     on<GetStudentByProfessor>(_getStudentByProfessor);
+    on<SearchForStudent>(_onSearchStudent);
   }
 
   // Add Student
@@ -19,8 +20,7 @@ class StudentPageBloc extends Bloc<StudentEvent, StudentState> {
     emit(state.copyWith(isLoading: true));
     try {
       await professorRepo.insertStudent(event.student);
-      final updateStudent = await professorRepo.getAllStudent();
-      emit(state.copyWith(studentList: updateStudent, isLoading: false));
+      emit(state.copyWith(studentList: state.studentList, isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: "failed to Student"));
     }
@@ -67,9 +67,21 @@ class StudentPageBloc extends Bloc<StudentEvent, StudentState> {
     try {
       final newProfessor = await professorRepo.getStudentByProfessor(event.profId);
       final professor = await professorRepo.getAllProfessor();
+      add(GetToStudent());
       emit(state.copyWith(studentList: newProfessor, isLoading: false, professorList: professor));
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      emit(state.copyWith(isLoading: false, error: 'failed for Get student'));
     }
+  }
+
+  void _onSearchStudent(SearchForStudent event, Emitter<StudentState> emit) {
+    final searchResults = state.studentList
+        .where((student) =>
+            student.name.toLowerCase().startsWith(event.searchQuery.toLowerCase()) ||
+            student.email.toLowerCase().startsWith(event.searchQuery.toLowerCase()) ||
+            student.number.startsWith(event.searchQuery))
+        .toList();
+
+    emit(state.copyWith(searchList: searchResults));
   }
 }

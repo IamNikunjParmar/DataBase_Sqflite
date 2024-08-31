@@ -104,6 +104,7 @@ class ProfessorRepo {
     );
   }
 
+//GetStudentByProfessor
   Future<List<StudentModal>> getStudentByProfessor(String professorId) async {
     List<Map<String, dynamic>> result = await database.query(
       studentTable,

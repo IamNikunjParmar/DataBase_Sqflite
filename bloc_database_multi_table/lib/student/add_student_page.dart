@@ -104,6 +104,7 @@ class AddStudentPage extends StatelessWidget {
                   const SnackBar(
                     behavior: SnackBarBehavior.floating,
                     showCloseIcon: true,
+                    backgroundColor: Colors.green,
                     content: Text("Student Added"),
                   ),
                 );

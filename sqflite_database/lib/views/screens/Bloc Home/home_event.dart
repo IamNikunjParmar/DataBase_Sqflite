@@ -1,4 +1,13 @@
-part of 'home_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-sealed class HomeEvent {}
+abstract class HomeEvent extends Equatable {
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class FatchEmployee extends HomeEvent {
+  final String query;
+
+  FatchEmployee({required this.query});
+}

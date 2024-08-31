@@ -11,6 +11,7 @@ class ProfessorBloc extends Bloc<ProfessorEvent, ProfessorState> {
     on<AddProfessor>(addToProfessor);
     on<GetProfessor>(getToProfessor);
     on<FilterStudentByProfessor>(_filterStudentByProfessor);
+    on<SearchForProfessor>(_onSearchProfessor);
   }
 
   //Insert professor
@@ -18,8 +19,7 @@ class ProfessorBloc extends Bloc<ProfessorEvent, ProfessorState> {
     emit(state.copyWith(isLoading: true));
     try {
       await professorRepo.insertProfessor(event.query);
-      final updatedProfessors = await professorRepo.getAllProfessor();
-      emit(state.copyWith(professorList: updatedProfessors, isLoading: false, refresh: true));
+      emit(state.copyWith(professorList: state.professorList, isLoading: false, refresh: true));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: "failed to insert professor"));
     }
@@ -40,10 +40,21 @@ class ProfessorBloc extends Bloc<ProfessorEvent, ProfessorState> {
     emit(state.copyWith(isLoading: true));
     try {
       final newProfessor = await professorRepo.getStudentByProfessor(event.student);
-      final student = await professorRepo.getAllProfessor();
-      emit(state.copyWith(filterStudentList: newProfessor, isLoading: false, professorList: student));
+      emit(state.copyWith(filterStudentList: newProfessor, isLoading: false, professorList: state.professorList));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
+  }
+
+  // Search For Professor
+  void _onSearchProfessor(SearchForProfessor event, Emitter<ProfessorState> emit) {
+    final searchResults = state.professorList
+        .where((professor) =>
+            professor.name.toLowerCase().startsWith(event.searchQuery.toLowerCase()) ||
+            professor.subject.toLowerCase().startsWith(event.searchQuery.toLowerCase()) ||
+            professor.number.startsWith(event.searchQuery))
+        .toList();
+
+    emit(state.copyWith(searchList: searchResults));
   }
 }

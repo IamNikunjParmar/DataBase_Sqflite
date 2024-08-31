@@ -1,4 +1,17 @@
-part of 'details_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-sealed class DetailsEvent {}
+class DetailsEvent extends Equatable {
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class SearchFood extends DetailsEvent {
+  final String query;
+
+  SearchFood({required this.query});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [query];
+}

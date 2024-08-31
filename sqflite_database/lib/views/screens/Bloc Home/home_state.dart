@@ -1,6 +1,16 @@
-part of 'home_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:sqflite_database/model/emp_model.dart';
 
-@immutable
-sealed class HomeState {}
+class HomeState extends Equatable {
+  final List<EmployeeModel> employeeList;
 
-final class HomeInitial extends HomeState {}
+  const HomeState({this.employeeList = const <EmployeeModel>[]});
+
+  HomeState copyWith({List<EmployeeModel>? emp}) {
+    return HomeState(employeeList: emp ?? employeeList);
+  }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [employeeList];
+}

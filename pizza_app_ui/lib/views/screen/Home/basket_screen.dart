@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:pizza_app_ui/modal/catgory_data_modal.dart';
+import 'package:pizza_app_ui/utils/my_routes_utils.dart';
 
 import '../../../../utils/color_utils.dart';
 import '../../../../utils/image_utils.dart';
@@ -15,10 +17,12 @@ class BasketScreen extends StatefulWidget {
 
 class _BasketScreenState extends State<BasketScreen> {
   bool isExpanded = false;
-  bool _isVisible = false;
+  bool _isVisible = true;
 
   @override
   Widget build(BuildContext context) {
+    final List<CategoryData> basketItem = ModalRoute.of(context)!.settings.arguments as List<CategoryData>;
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -99,29 +103,45 @@ class _BasketScreenState extends State<BasketScreen> {
                                   ),
                                 ],
                               ),
-                              CustomBasketContainer(
-                                imagePath: ImagePath.pizzasImage4,
-                                title: "Diavola Pizza",
-                                subtitle: "Thin Crust",
-                                endTitle: "Extra Mushrooms",
-                                price: '£9.99',
-                              ),
-                              const Gap(10),
-                              CustomBasketContainer(
-                                imagePath: ImagePath.pizzasImage3,
-                                title: "Pepperoni Breadsticks",
-                                subtitle: "8 Units",
-                                endTitle: "Additional Sauce",
-                                price: '£2.99',
-                              ),
-                              const Gap(10),
-                              CustomBasketContainer(
-                                imagePath: ImagePath.cokeImage,
-                                title: "Coca Cola 350ml.",
-                                subtitle: "Thin Crust",
-                                endTitle: "Extra Mushrooms",
-                                price: '£9.99',
-                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                    itemCount: basketItem.length,
+                                    itemBuilder: (ctx, index) {
+                                      final myItem = basketItem[index];
+
+                                      return CustomBasketContainer(
+                                        imagePath: myItem.image,
+                                        title: myItem.title,
+                                        subtitle: "Thin Crust",
+                                        endTitle: "Extra Mushrooms",
+                                        price: '£${myItem.price.toString()}',
+                                      );
+                                    }),
+                              )
+
+                              // CustomBasketContainer(
+                              //   imagePath: ImagePath.pizzasImage4,
+                              //   title: "Diavola Pizza",
+                              //   subtitle: "Thin Crust",
+                              //   endTitle: "Extra Mushrooms",
+                              //   price: '£9.99',
+                              // ),
+                              // const Gap(10),
+                              // CustomBasketContainer(
+                              //   imagePath: ImagePath.pizzasImage3,
+                              //   title: "Pepperoni Breadsticks",
+                              //   subtitle: "8 Units",
+                              //   endTitle: "Additional Sauce",
+                              //   price: '£2.99',
+                              // ),
+                              // const Gap(10),
+                              // CustomBasketContainer(
+                              //   imagePath: ImagePath.cokeImage,
+                              //   title: "Coca Cola 350ml.",
+                              //   subtitle: "Thin Crust",
+                              //   endTitle: "Extra Mushrooms",
+                              //   price: '£9.99',
+                              // ),
                             ],
                           ),
                         ),
@@ -171,7 +191,7 @@ class _BasketScreenState extends State<BasketScreen> {
               ),
             ),
             DraggableScrollableSheet(
-              initialChildSize: 0.2,
+              initialChildSize: 0.1,
               minChildSize: 0.1,
               maxChildSize: 0.5,
               builder: (context, scrollController) {
@@ -346,7 +366,9 @@ class _BasketScreenState extends State<BasketScreen> {
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all(AppColor.dotIndicator),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(MyRoutes.finalPaymentScreen);
+                            },
                             child: const Text(
                               "Confirm Basket",
                               style: TextStyle(

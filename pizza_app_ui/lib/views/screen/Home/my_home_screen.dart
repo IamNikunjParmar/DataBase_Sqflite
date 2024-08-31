@@ -23,6 +23,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     double h = s.height;
     double w = s.width;
 
+    List<CategoryData> basketItem = [];
+
     List<CategoryData> getSelectedCategoryList() {
       switch (selectedIndex) {
         case 0:
@@ -290,8 +292,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         CategoryData pro = getSelectedCategoryList()[index];
                                         return InkWell(
                                           onTap: () {
-                                            Navigator.of(context)
-                                                .pushNamed(MyRoutes.productDetailsScreen, arguments: pro);
+                                            // Navigator.of(context)
+                                            //     .pushNamed(MyRoutes.productDetailsScreen, arguments: pro);
                                           },
                                           child: Container(
                                             height: 104,
@@ -304,88 +306,110 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                 Radius.circular(8),
                                               ),
                                             ),
-                                            child: Column(
-                                              children: [
-                                                ListTile(
-                                                  leading: Container(
-                                                    height: 72,
-                                                    width: 72,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey,
-                                                      borderRadius: const BorderRadius.all(
-                                                        Radius.circular(8),
-                                                      ),
-                                                      image: DecorationImage(
-                                                        image: AssetImage(pro.image),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.grey.shade700,
-                                                          offset: const Offset(0, 4),
-                                                          spreadRadius: 1,
-                                                          blurRadius: 5,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .pushNamed(MyRoutes.productDetailsScreen, arguments: pro);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    leading: Container(
+                                                      height: 72,
+                                                      width: 72,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey,
+                                                        borderRadius: const BorderRadius.all(
+                                                          Radius.circular(8),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  title: Transform.translate(
-                                                    offset: const Offset(5, -12),
-                                                    child: Text(
-                                                      pro.title,
-                                                      style: const TextStyle(
-                                                        color: Color(0xff222226),
-                                                        fontWeight: FontWeight.w600,
-                                                        fontSize: 15,
+                                                        image: DecorationImage(
+                                                          image: AssetImage(pro.image),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey.shade700,
+                                                            offset: const Offset(0, 4),
+                                                            spreadRadius: 1,
+                                                            blurRadius: 5,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
-                                                  ),
-                                                  subtitle: Transform.translate(
-                                                    offset: const Offset(5, -12),
-                                                    child: Text(
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      pro.subtitle,
-                                                      style: const TextStyle(
-                                                        color: Color(0xff75757C),
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  trailing: Transform.translate(
-                                                    offset: const Offset(15, 30),
-                                                    child: InkWell(
-                                                      onTap: () {},
-                                                      child: const Icon(
-                                                        Icons.add_circle_outline_rounded,
-                                                        color: AppColor.dotIndicator,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    const SizedBox(
-                                                      width: 92,
-                                                    ),
-                                                    Transform.translate(
-                                                      offset: const Offset(15, -18),
+                                                    title: Transform.translate(
+                                                      offset: const Offset(5, -12),
                                                       child: Text(
-                                                        "£${pro.price.toString()}",
+                                                        pro.title,
                                                         style: const TextStyle(
-                                                          color: AppColor.dotIndicator,
+                                                          color: Color(0xff222226),
                                                           fontWeight: FontWeight.w600,
-                                                          fontSize: 14,
+                                                          fontSize: 15,
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(
-                                                      width: 25,
+                                                    subtitle: Transform.translate(
+                                                      offset: const Offset(5, -12),
+                                                      child: Text(
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        pro.subtitle,
+                                                        style: const TextStyle(
+                                                          color: Color(0xff75757C),
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    trailing: Transform.translate(
+                                                      offset: const Offset(15, 30),
+                                                      child: IconButton(
+                                                        color: AppColor.dotIndicator,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            basketItem.add(pro);
+                                                          });
+                                                          Navigator.of(context)
+                                                              .pushNamed(MyRoutes.basketScreen, arguments: basketItem);
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            const SnackBar(
+                                                              backgroundColor: AppColor.dotIndicator,
+                                                              behavior: SnackBarBehavior.floating,
+                                                              showCloseIcon: true,
+                                                              content: Text(
+                                                                "Pizza Added to Basket",
+                                                                style: TextStyle(color: AppColor.whiteColor),
+                                                              ),
+                                                            ),
+                                                          );
+                                                          print("${basketItem.length}=======================");
+                                                        },
+                                                        icon: const Icon(Icons.add_circle_outline_rounded),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: 92,
+                                                      ),
+                                                      Transform.translate(
+                                                        offset: const Offset(15, -18),
+                                                        child: Text(
+                                                          "£${pro.price.toString()}",
+                                                          style: const TextStyle(
+                                                            color: AppColor.dotIndicator,
+                                                            fontWeight: FontWeight.w600,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 25,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         );

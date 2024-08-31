@@ -8,31 +8,29 @@ import 'package:bloc_database_multi_table/student/student_page_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class StudentPageView extends StatefulWidget {
+class StudentPageView extends StatelessWidget {
   StudentPageView({super.key});
 
   static const String routeName = 'student_page_view';
 
   static Widget builder(BuildContext context) {
     return BlocProvider(
-      create: (context) => StudentPageBloc()..add(GetToStudent()),
+      create: (context) => StudentPageBloc(),
       child: StudentPageView(),
     );
   }
 
-  @override
-  State<StudentPageView> createState() => _StudentPageViewState();
-}
-
-class _StudentPageViewState extends State<StudentPageView> {
   List<ProfessorModal> professors = [];
 
   TextEditingController nameController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
+
   TextEditingController numberController = TextEditingController();
+
   TextEditingController professorIdController = TextEditingController();
 
-  void _showEditDialog(StudentModal student) {
+  void _showEditDialog(StudentModal student, BuildContext context) {
     TextEditingController nameController = TextEditingController(text: student.name);
     TextEditingController emailController = TextEditingController(text: student.email);
     TextEditingController numberController = TextEditingController(text: student.number);
@@ -92,7 +90,7 @@ class _StudentPageViewState extends State<StudentPageView> {
     );
   }
 
-  void _showProfessorDialog(StudentModal student) {
+  void _showProfessorDialog(StudentModal student, BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -134,6 +132,7 @@ class _StudentPageViewState extends State<StudentPageView> {
                                 ),
                               ),
                             );
+
                             // _loadStudent();
                           },
                         );
@@ -146,145 +145,186 @@ class _StudentPageViewState extends State<StudentPageView> {
     );
   }
 
+  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<StudentPageBloc, StudentState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state.error.isNotEmpty) {
-            return Center(child: Text(state.error));
-          } else if (state.studentList.isNotEmpty) {
-            return ListView.builder(
-                itemCount: state.studentList.length,
-                itemBuilder: (context, index) {
-                  StudentModal student = state.studentList[index];
-                  return Card(
-                    elevation: 7,
-                    margin: const EdgeInsets.all(10),
-                    child: Container(
-                      height: 200,
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                'Name: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(student.name),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                'email: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(student.email),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                'Mobile: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(student.number),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Professor Name:",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(" ${student.professorId ?? 'Not Assigned'}"),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  _showEditDialog(student);
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  context.read<StudentPageBloc>().add(DeleteToStudent(id: student.id!));
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.person_add),
-                                onPressed: () {
-                                  context.read<StudentPageBloc>().add(GetStudentByProfessor(profId: student.name));
-                                  _showProfessorDialog(student);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(20),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (val) {
+                      context.read<StudentPageBloc>().add(SearchForStudent(searchQuery: val));
+                    },
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      labelText: "Search For Student",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
                       ),
                     ),
-                  );
-                });
-          } else {
-            return const Center(
-                child: Text(
-              "No Student",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ));
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.of(context).pushNamed(AddStudentPage.routeName);
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: BlocBuilder<StudentPageBloc, StudentState>(
+          /// bloc: StudentPageBloc()..add(GetToStudent()),
+          builder: (context, state) {
+            final students = searchController.text.isEmpty ? state.studentList : state.searchList;
 
-          if (result == true) {
-            context.read<StudentPageBloc>().add(GetToStudent());
-          }
-        },
-        child: const Icon(Icons.add),
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.error.isNotEmpty) {
+              return Center(child: Text(state.error));
+            } else if (students.isNotEmpty) {
+              return ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (context, index) {
+                    StudentModal student = students[index];
+                    return Card(
+                      elevation: 7,
+                      margin: const EdgeInsets.all(10),
+                      child: Container(
+                        height: 189,
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  'Name: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(student.name),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  'email: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(student.email),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  'Mobile: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(student.number),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Professor Name:",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(" ${student.professorId ?? 'Not Assigned'}"),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _showEditDialog(student, context);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    context.read<StudentPageBloc>().add(DeleteToStudent(id: student.id!));
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.person_add),
+                                  onPressed: () {
+                                    context.read<StudentPageBloc>().add(GetStudentByProfessor(profId: student.name));
+                                    _showProfessorDialog(student, context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  });
+            } else {
+              return const Center(
+                  child: Text(
+                "No Student",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ));
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final result = await Navigator.of(context).pushNamed(AddStudentPage.routeName);
+
+            if (result == true) {
+              context.read<StudentPageBloc>().add(GetToStudent());
+            }
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

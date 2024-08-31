@@ -45,3 +45,12 @@ class GetStudentByProfessor extends StudentEvent {
   // TODO: implement props
   List<Object?> get props => [profId];
 }
+
+class SearchForStudent extends StudentEvent {
+  final String searchQuery;
+
+  SearchForStudent({required this.searchQuery});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [searchQuery];
+}

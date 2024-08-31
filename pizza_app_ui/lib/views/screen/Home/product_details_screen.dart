@@ -274,6 +274,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked,
@@ -307,6 +314,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked1,
@@ -340,6 +354,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked2,
@@ -373,6 +394,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked3,
@@ -406,6 +434,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked4,
@@ -517,6 +552,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: _isChecked4,
@@ -543,6 +585,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Transform.scale(
                     scale: 1.13,
                     child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       // fillColor: WidgetStateProperty.all(Colors.red),
                       visualDensity: const VisualDensity(vertical: -4),
                       controlAffinity: ListTileControlAffinity.leading,
@@ -566,7 +615,240 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       activeColor: AppColor.dotIndicator,
                     ),
                   ),
-                  const Gap(30),
+                  const Gap(15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Dips/Sauces",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: AppColor.proDetailsTitleColor,
+                        ),
+                      ),
+                      Container(
+                        height: 24,
+                        width: 81,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Color(0xffEEEEEF),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Optional",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: AppColor.textDisable,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Gap(10),
+                  Transform.scale(
+                    scale: 1.13,
+                    child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      visualDensity: const VisualDensity(vertical: -4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _isChecked,
+                      onChanged: (val) {
+                        setState(() {
+                          _isChecked = val!;
+                        });
+                      },
+                      title: Transform.translate(
+                        offset: const Offset(-15, 0),
+                        child: const Text(
+                          "Green Sauce",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColor.proDetailsTitleColor,
+                          ),
+                        ),
+                      ),
+                      secondary: const Text(
+                        "+£0.99",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: AppColor.dotIndicator,
+                        ),
+                      ),
+                      activeColor: AppColor.dotIndicator,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 1.13,
+                    child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      visualDensity: const VisualDensity(vertical: -4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _isChecked1,
+                      onChanged: (val) {
+                        setState(() {
+                          _isChecked1 = val!;
+                        });
+                      },
+                      title: Transform.translate(
+                        offset: const Offset(-15, 0),
+                        child: const Text(
+                          "Roasted Garlic Mayo",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColor.proDetailsTitleColor,
+                          ),
+                        ),
+                      ),
+                      secondary: const Text(
+                        "+£0.50",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: AppColor.dotIndicator,
+                        ),
+                      ),
+                      activeColor: AppColor.dotIndicator,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 1.13,
+                    child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      visualDensity: const VisualDensity(vertical: -4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _isChecked2,
+                      onChanged: (val) {
+                        setState(() {
+                          _isChecked2 = val!;
+                        });
+                      },
+                      title: Transform.translate(
+                        offset: const Offset(-15, 0),
+                        child: const Text(
+                          "Hot Honey Ranch Sauce",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColor.proDetailsTitleColor,
+                          ),
+                        ),
+                      ),
+                      secondary: const Text(
+                        "+£0.20",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: AppColor.dotIndicator,
+                        ),
+                      ),
+                      activeColor: AppColor.dotIndicator,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 1.13,
+                    child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      visualDensity: const VisualDensity(vertical: -4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _isChecked3,
+                      onChanged: (val) {
+                        setState(() {
+                          _isChecked3 = val!;
+                        });
+                      },
+                      title: Transform.translate(
+                        offset: const Offset(-15, 0),
+                        child: const Text(
+                          "Spicy Mayo",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColor.proDetailsTitleColor,
+                          ),
+                        ),
+                      ),
+                      secondary: const Text(
+                        "+£0.70",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: AppColor.dotIndicator,
+                        ),
+                      ),
+                      activeColor: AppColor.dotIndicator,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 1.13,
+                    child: CheckboxListTile(
+                      side: const BorderSide(
+                        color: AppColor.checkBoxColor,
+                        width: 2,
+                      ),
+                      checkboxShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      visualDensity: const VisualDensity(vertical: -4),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _isChecked4,
+                      onChanged: (val) {
+                        setState(() {
+                          _isChecked4 = val!;
+                        });
+                      },
+                      title: Transform.translate(
+                        offset: const Offset(-15, 0),
+                        child: const Text(
+                          "Sweet Chilli And Lime Sauce",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColor.proDetailsTitleColor,
+                          ),
+                        ),
+                      ),
+                      secondary: const Text(
+                        "+£0.50",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: AppColor.dotIndicator,
+                        ),
+                      ),
+                      activeColor: AppColor.dotIndicator,
+                    ),
+                  ),
                 ],
               ),
             ),

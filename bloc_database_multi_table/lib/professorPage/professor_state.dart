@@ -8,6 +8,7 @@ class ProfessorState extends Equatable {
   final bool refresh;
   final String error;
   final List<StudentModal> filterStudentList;
+  final List<ProfessorModal> searchList;
 
   const ProfessorState({
     this.professorList = const <ProfessorModal>[],
@@ -15,6 +16,7 @@ class ProfessorState extends Equatable {
     this.error = "",
     this.refresh = false,
     this.filterStudentList = const <StudentModal>[],
+    this.searchList = const <ProfessorModal>[],
   });
 
   ProfessorState copyWith({
@@ -23,6 +25,7 @@ class ProfessorState extends Equatable {
     String? error,
     bool? refresh,
     List<StudentModal>? filterStudentList,
+    List<ProfessorModal>? searchList,
   }) {
     return ProfessorState(
       professorList: professorList ?? this.professorList,
@@ -30,10 +33,11 @@ class ProfessorState extends Equatable {
       error: error ?? this.error,
       refresh: refresh ?? this.refresh,
       filterStudentList: filterStudentList ?? this.filterStudentList,
+      searchList: searchList ?? this.searchList,
     );
   }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [professorList, isLoading, error, refresh, filterStudentList];
+  List<Object?> get props => [professorList, isLoading, error, refresh, filterStudentList, searchList];
 }
