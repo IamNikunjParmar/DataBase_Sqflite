@@ -1,17 +1,30 @@
+import 'package:cubit_demo/modal/api_modal.dart';
 import 'package:equatable/equatable.dart';
 
-enum ApiStatus { loading, success, error }
-
 class HomeState extends Equatable {
-  final ApiStatus apiStatus;
+  final bool isLoading;
+  final String error;
+  final List<DioModal> userList;
 
-  const HomeState({this.apiStatus = ApiStatus.loading});
+  const HomeState({
+    this.isLoading = true,
+    this.userList = const <DioModal>[],
+    this.error = '',
+  });
 
-  HomeState copyWith({ApiStatus? apiStatus}) {
-    return HomeState(apiStatus: apiStatus ?? this.apiStatus);
+  HomeState copyWith({
+    bool? isLoading,
+    List<DioModal>? userList,
+    String? error,
+  }) {
+    return HomeState(
+      isLoading: isLoading ?? this.isLoading,
+      userList: userList ?? this.userList,
+      error: error ?? this.error,
+    );
   }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [ApiStatus];
+  List<Object?> get props => [isLoading, error, userList];
 }
