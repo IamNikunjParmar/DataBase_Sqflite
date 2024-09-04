@@ -1,3 +1,4 @@
+import 'package:cubit_database_sqflite/helper/db_helper.dart';
 import 'package:cubit_database_sqflite/home/add_student_page.dart';
 import 'package:cubit_database_sqflite/home/home_page_cubit.dart';
 import 'package:cubit_database_sqflite/home/home_page_state.dart';
@@ -16,6 +17,62 @@ class HomePageView extends StatelessWidget {
       create: (_) => HomePageCubit()..onGetStudent(),
       child: const HomePageView(),
     );
+  }
+
+  _showEditStudentDialog(StudentModal student, BuildContext context) {
+    TextEditingController nameController = TextEditingController(text: student.name);
+    TextEditingController courseController = TextEditingController(text: student.course);
+    TextEditingController numberController = TextEditingController(text: student.number);
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Update Student"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: courseController,
+                  decoration: const InputDecoration(labelText: 'Course'),
+                ),
+                TextField(
+                  controller: numberController,
+                  decoration: const InputDecoration(labelText: 'Number'),
+                ),
+              ],
+            ),
+            actions: [
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  student.name = nameController.text;
+                  student.course = courseController.text;
+                  student.number = numberController.text;
+                  context.read<HomePageCubit>().onUpdateStudent(student);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      showCloseIcon: true,
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.green,
+                      content: Text("Student Updated.."),
+                    ),
+                  );
+                },
+                child: const Text("Update"),
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -37,6 +94,8 @@ class HomePageView extends StatelessWidget {
               return Text(state.error);
             } else if (state.studentList.isNotEmpty) {
               return RefreshIndicator(
+                color: Colors.white,
+                backgroundColor: Colors.black,
                 onRefresh: () {
                   return context.read<HomePageCubit>().onGetStudent();
                 },
@@ -54,42 +113,22 @@ class HomePageView extends StatelessWidget {
                             Text(student.name),
                             const Gap(35),
                             GestureDetector(
-                              onTap: () {
-                                TextEditingController nameController = TextEditingController(text: student.name);
-                                TextEditingController courseController = TextEditingController(text: student.course);
-                                TextEditingController numberController = TextEditingController(text: student.number);
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: const Text("Update Student"),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            TextField(
-                                              controller: nameController,
-                                              decoration: const InputDecoration(labelText: 'Name'),
-                                            ),
-                                            TextField(
-                                              controller: courseController,
-                                              decoration: const InputDecoration(labelText: 'Course'),
-                                            ),
-                                            TextField(
-                                              controller: numberController,
-                                              decoration: const InputDecoration(labelText: 'Number'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    });
+                              onTap: () async {
+                                _showEditStudentDialog(student, context);
                               },
                               child: const Icon(Icons.edit),
                             ),
-                            GestureDetector(onTap: () {}, child: const Icon(Icons.delete)),
+                            GestureDetector(
+                              onTap: () {
+                                context.read<HomePageCubit>().onDeleteStudent(student.id!);
+                                context.read<HomePageCubit>().onGetStudent();
+                              },
+                              child: const Icon(Icons.delete),
+                            ),
                           ],
                         ),
                         leading: CircleAvatar(
-                          child: Text(student.id.toString()),
+                          child: Text('${index + 1}'.toString()),
                         ),
                         children: [
                           Container(
@@ -167,6 +206,7 @@ class HomePageView extends StatelessWidget {
           if (result == true) {
             context.read<HomePageCubit>().onGetStudent();
           }
+          // context.read<HomePageCubit>().load();
         },
         child: const Icon(Icons.add),
       ),
