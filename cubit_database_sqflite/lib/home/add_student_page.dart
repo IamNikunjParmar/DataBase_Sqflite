@@ -95,6 +95,14 @@ class AddStudentPage extends StatelessWidget {
                   );
                   context.read<HomePageCubit>().onInsertStudent(student);
                   Navigator.pop(context, true);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      behavior: SnackBarBehavior.fixed,
+                      showCloseIcon: true,
+                      backgroundColor: Colors.green,
+                      content: Text("Student Added"),
+                    ),
+                  );
                 },
                 child: const Text("Add Student"),
               ),

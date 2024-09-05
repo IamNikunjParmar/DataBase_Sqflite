@@ -1,11 +1,11 @@
-import 'package:cubit_database_sqflite/helper/db_helper.dart';
-import 'package:cubit_database_sqflite/home/add_student_page.dart';
-import 'package:cubit_database_sqflite/home/home_page_cubit.dart';
 import 'package:cubit_database_sqflite/home/home_page_state.dart';
-import 'package:cubit_database_sqflite/modal/student_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:cubit_database_sqflite/modal/student_modal.dart';
+import 'package:cubit_database_sqflite/home/home_page_cubit.dart';
+import 'package:cubit_database_sqflite/home/add_student_page.dart';
+import 'package:path/path.dart';
 
 class HomePageView extends StatelessWidget {
   const HomePageView({super.key});
@@ -19,62 +19,6 @@ class HomePageView extends StatelessWidget {
     );
   }
 
-  _showEditStudentDialog(StudentModal student, BuildContext context) {
-    TextEditingController nameController = TextEditingController(text: student.name);
-    TextEditingController courseController = TextEditingController(text: student.course);
-    TextEditingController numberController = TextEditingController(text: student.number);
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Update Student"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                ),
-                TextField(
-                  controller: courseController,
-                  decoration: const InputDecoration(labelText: 'Course'),
-                ),
-                TextField(
-                  controller: numberController,
-                  decoration: const InputDecoration(labelText: 'Number'),
-                ),
-              ],
-            ),
-            actions: [
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  student.name = nameController.text;
-                  student.course = courseController.text;
-                  student.number = numberController.text;
-                  context.read<HomePageCubit>().onUpdateStudent(student);
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      showCloseIcon: true,
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: Colors.green,
-                      content: Text("Student Updated.."),
-                    ),
-                  );
-                },
-                child: const Text("Update"),
-              ),
-            ],
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,129 +28,126 @@ class HomePageView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: BlocBuilder<HomePageCubit, HomePageState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state.error.isNotEmpty) {
-              return Text(state.error);
-            } else if (state.studentList.isNotEmpty) {
-              return RefreshIndicator(
-                color: Colors.white,
-                backgroundColor: Colors.black,
-                onRefresh: () {
-                  return context.read<HomePageCubit>().onGetStudent();
-                },
-                child: ListView.builder(
-                  itemCount: state.studentList.length,
-                  itemBuilder: (ctx, index) {
-                    StudentModal student = state.studentList[index];
-                    return Card(
-                      color: Colors.white,
-                      elevation: 5,
-                      child: ExpansionTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(student.name),
-                            const Gap(35),
-                            GestureDetector(
-                              onTap: () async {
-                                _showEditStudentDialog(student, context);
-                              },
-                              child: const Icon(Icons.edit),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                context.read<HomePageCubit>().onDeleteStudent(student.id!);
-                                context.read<HomePageCubit>().onGetStudent();
-                              },
-                              child: const Icon(Icons.delete),
-                            ),
-                          ],
-                        ),
-                        leading: CircleAvatar(
-                          child: Text('${index + 1}'.toString()),
-                        ),
+        child: BlocBuilder<HomePageCubit, HomePageState>(builder: (context, state) {
+          print("GetStudentList: ${state.studentList.length}");
+          if (state.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state.error.isNotEmpty) {
+            return Center(
+              child: Text(state.error),
+            );
+          } else if (state.studentList.isNotEmpty) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                await context.read<HomePageCubit>().onGetStudent();
+              },
+              child: ListView.builder(
+                itemCount: state.studentList.length,
+                itemBuilder: (ctx, index) {
+                  StudentModal student = state.studentList[index];
+                  return Card(
+                    color: Colors.white,
+                    elevation: 5,
+                    child: ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            height: 90,
-                            width: 400,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(15),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "Course:",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      const Gap(5),
-                                      Text(
-                                        student.course,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "Number:",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      const Gap(5),
-                                      Text(
-                                        student.number,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Text(student.name),
+                          const Gap(35),
+                          GestureDetector(
+                            onTap: () {
+                              context.read<HomePageCubit>().showEditStudentDialog(student, context);
+                            },
+                            child: const Icon(Icons.edit),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              context.read<HomePageCubit>().onDeleteStudent(student.id!);
+                            },
+                            child: const Icon(Icons.delete),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-              );
-            } else {
-              return const Center(
-                child: Text("no Student"),
-              );
-            }
-          },
-        ),
+                      leading: CircleAvatar(
+                        child: Text("${index + 1}".toString()),
+                      ),
+                      children: [
+                        Container(
+                          height: 70,
+                          width: 400,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Course:",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    const Gap(5),
+                                    Text(
+                                      student.course,
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Number:",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    const Gap(5),
+                                    Text(
+                                      student.number,
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
+          } else {
+            return const Center(
+                child: Text(
+              "No Student",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ));
+          }
+        }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.of(context).pushNamed(AddStudentPage.routeName);
-
           if (result == true) {
             context.read<HomePageCubit>().onGetStudent();
           }
-          // context.read<HomePageCubit>().load();
         },
         child: const Icon(Icons.add),
       ),
