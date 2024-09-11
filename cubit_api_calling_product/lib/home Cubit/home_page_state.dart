@@ -16,12 +16,14 @@ final class HomePageLoaded extends HomePageState {
   final String? selectedCategory;
   final List<ProductModal> filterProduct;
   final String searchQuery;
+  final List<ProductModal> cartList;
 
   HomePageLoaded({
     this.allProduct = const <ProductModal>[],
     this.selectedCategory = '',
     required this.filterProduct,
     this.searchQuery = '',
+    this.cartList = const <ProductModal>[],
   });
 
   HomePageLoaded copyWith({
@@ -29,18 +31,20 @@ final class HomePageLoaded extends HomePageState {
     String? selectedCategory,
     List<ProductModal>? filterProduct,
     String? searchQuery,
+    List<ProductModal>? cartList,
   }) {
     return HomePageLoaded(
       allProduct: allProduct ?? this.allProduct,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       filterProduct: filterProduct ?? this.filterProduct,
       searchQuery: searchQuery ?? this.searchQuery,
+      cartList: cartList ?? this.cartList,
     );
   }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [allProduct, selectedCategory, filterProduct, searchQuery];
+  List<Object?> get props => [allProduct, selectedCategory, filterProduct, searchQuery, cartList];
 }
 
 final class HomePageError extends HomePageState {

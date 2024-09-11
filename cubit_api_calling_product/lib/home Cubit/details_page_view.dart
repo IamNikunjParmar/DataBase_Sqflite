@@ -2,6 +2,7 @@ import 'package:cubit_api_calling_product/modal/product_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:gap/gap.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DetailsPageView extends StatelessWidget {
   const DetailsPageView({super.key});
@@ -45,13 +46,19 @@ class DetailsPageView extends StatelessWidget {
                   borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
-                  image: DecorationImage(
-                    image: NetworkImage(product.thumbnail),
-                  ),
                   border: Border.all(
                     color: Colors.grey,
                     width: 1,
                   ),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: product.thumbnail,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xff5C0319),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.warning),
                 ),
               ),
               const Gap(15),
@@ -139,9 +146,15 @@ class DetailsPageView extends StatelessWidget {
                         borderRadius: const BorderRadius.all(
                           Radius.circular(15),
                         ),
-                        image: DecorationImage(
-                          image: NetworkImage(image),
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: image,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xff5C0319),
+                          ),
                         ),
+                        errorWidget: (context, url, error) => const Icon(Icons.warning),
                       ),
                     );
                   },
@@ -173,67 +186,65 @@ class DetailsPageView extends StatelessWidget {
                   itemBuilder: (ctx, index) {
                     List<Review> review = product.reviews;
                     print("$review------------++++++++++++++++++++++");
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  "Name:",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                "Name:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  review[index].reviewerName.toString() ?? 'no',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              ),
+                              Text(
+                                review[index].reviewerName.toString() ?? 'no',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "comment:",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text(
+                                "comment:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  review[index].comment.toString() ?? 'no',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                              ),
+                              Text(
+                                review[index].comment.toString() ?? 'no',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "rating:",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text(
+                                "rating:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  review[index].rating.toString() ?? 'no',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              ),
+                              Text(
+                                review[index].rating.toString() ?? 'no',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     );
                   },
