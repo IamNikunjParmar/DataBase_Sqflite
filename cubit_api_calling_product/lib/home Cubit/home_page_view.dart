@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:cubit_api_calling_product/cartCubit/cart_cubit.dart';
 import 'package:cubit_api_calling_product/cartCubit/cart_page_view.dart';
+import 'package:cubit_api_calling_product/helper/db_helper.dart';
 import 'package:cubit_api_calling_product/home%20Cubit/details_page_view.dart';
 import 'package:cubit_api_calling_product/home%20Cubit/home_page_cubit.dart';
 import 'package:cubit_api_calling_product/modal/cart_modal.dart';
@@ -204,10 +205,22 @@ class HomePAgeViewCubit extends StatelessWidget {
                                                 thumbnail: product.thumbnail,
                                                 price: product.price,
                                                 quntitey: 1,
+                                                totalPrice: product.price,
                                               );
 
-                                              cartBox.add(newProduct);
+                                              context.read<CartCubit>().addToCart(product.id, newProduct);
+                                              context.read<CartCubit>().totalCartProduct(product.id, newProduct);
 
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text("Product add to Cart"),
+                                                  showCloseIcon: true,
+                                                  backgroundColor: Colors.green,
+                                                  behavior: SnackBarBehavior.floating,
+                                                ),
+                                              );
+
+                                              print(product.id);
                                               print("CARTBOX:::::::::::::${cartBox.values.length}");
                                             },
                                             child: Container(

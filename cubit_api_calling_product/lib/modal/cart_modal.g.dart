@@ -22,13 +22,14 @@ class CartModalAdapter extends TypeAdapter<CartModal> {
       thumbnail: fields[2] as String,
       price: fields[3] as double,
       quntitey: fields[4] as int,
+      totalPrice: fields[5] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CartModal obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class CartModalAdapter extends TypeAdapter<CartModal> {
       ..writeByte(3)
       ..write(obj.price)
       ..writeByte(4)
-      ..write(obj.quntitey);
+      ..write(obj.quntitey)
+      ..writeByte(5)
+      ..write(obj.totalPrice);
   }
 
   @override

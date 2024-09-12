@@ -1,8 +1,14 @@
 import 'package:cubit_api_calling_product/modal/product_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hive/hive.dart';
+
+import '../cartCubit/cart_cubit.dart';
+import '../cartCubit/cart_page_view.dart';
+import '../modal/cart_modal.dart';
 
 class DetailsPageView extends StatelessWidget {
   const DetailsPageView({super.key});
@@ -15,6 +21,8 @@ class DetailsPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartBox = Hive.box<CartModal>('CartBox');
+
     ProductModal product = ModalRoute.of(context)!.settings.arguments as ProductModal;
 
     int sumRating = 0;
@@ -26,6 +34,15 @@ class DetailsPageView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(CartPageView.routeName);
+            },
+            icon: const Icon(Icons.shopping_cart),
+            color: const Color(0xff5C0319),
+          ),
+        ],
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
@@ -251,6 +268,73 @@ class DetailsPageView extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        width: 400,
+        padding: const EdgeInsets.all(5),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border.fromBorderSide(
+            BorderSide(
+              width: 0.5,
+            ),
+          ),
+        ),
+        child: InkWell(
+          onTap: () async {
+            CartModal newProduct = CartModal(
+              id: product.id,
+              title: product.title,
+              thumbnail: product.thumbnail,
+              price: product.price,
+              quntitey: 1,
+            );
+
+            context.read<CartCubit>().addToCart(product.id, newProduct);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                duration: Duration(milliseconds: 400),
+                content: Text("Product add to Cart"),
+                showCloseIcon: true,
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+
+            print(product.id);
+            print("CARTBOX:::::::::::::${cartBox.values.length}");
+          },
+          child: Container(
+            height: 25,
+            width: 80,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Color(0xff5C0319),
+              borderRadius: BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                ),
+                Gap(8),
+                Text(
+                  "Add To Cart",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

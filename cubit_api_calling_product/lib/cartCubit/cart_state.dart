@@ -8,11 +8,13 @@ class CartLoading extends CartState {}
 
 class CartLoaded extends CartState {
   final List<CartModal> products;
-  CartLoaded({required this.products});
+  final int? quantity;
+  final double? totalPrice;
+  CartLoaded({required this.products, this.quantity, this.totalPrice});
 
   @override
   // TODO: implement props
-  List<Object?> get props => [products];
+  List<Object?> get props => [products, quantity, totalPrice];
 }
 
 class CartError extends CartState {

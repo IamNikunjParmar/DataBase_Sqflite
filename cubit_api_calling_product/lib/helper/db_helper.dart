@@ -3,22 +3,23 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class CartDbHelper {
   CartDbHelper._();
+
   static final CartDbHelper cartDbHelper = CartDbHelper._();
 
   static const String cartBoxName = 'CartBox';
 
-  Future<void> addToCart(CartModal product) async {
-    final box = await Hive.openBox<CartModal>(cartBoxName);
-    await box.put(product.id, product);
-  }
+  // Future<void> addToCart(int id, CartModal product) async {
+  //   final box = Hive.box<CartModal>(cartBoxName);
+  //   await box.put(product.id, product);
+  // }
 
   Future<List<CartModal>> getCartProduct() async {
-    final box = await Hive.openBox<CartModal>(cartBoxName);
+    final box = Hive.box<CartModal>(cartBoxName);
     return box.values.toList();
   }
 
   Future<void> removeCartProduct(int productId) async {
-    final box = await Hive.openBox<CartModal>(cartBoxName);
+    final box = Hive.box<CartModal>(cartBoxName);
     await box.delete(productId);
   }
 }

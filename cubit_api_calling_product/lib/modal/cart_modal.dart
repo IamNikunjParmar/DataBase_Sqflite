@@ -19,11 +19,15 @@ class CartModal extends HiveObject {
   @HiveField(4)
   int quntitey;
 
+  @HiveField(5)
+  double? totalPrice;
+
   CartModal({
     required this.id,
     required this.title,
     required this.thumbnail,
     required this.price,
     required this.quntitey,
+    this.totalPrice,
   });
 }

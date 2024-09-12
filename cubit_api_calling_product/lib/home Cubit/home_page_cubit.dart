@@ -47,11 +47,12 @@ class HomePageCubit extends Cubit<HomePageState> {
 // Search Category and title
   void onSearchAllFiled(String query) {
     if (query.isEmpty) {
+      final beautyProduct = newAllProduct.where((product) => product.category == 'beauty').toList();
       emit(
         HomePageLoaded(
-          filterProduct: newAllProduct,
+          filterProduct: beautyProduct.isNotEmpty ? beautyProduct : newAllProduct,
           allProduct: newAllProduct,
-          selectedCategory: null,
+          selectedCategory: 'beauty',
         ),
       );
     } else {
