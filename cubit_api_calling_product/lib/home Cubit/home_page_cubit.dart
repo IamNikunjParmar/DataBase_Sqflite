@@ -35,6 +35,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   // selected Category
   Future<void> setSelectedCategory(String category) async {
     final filtered = newAllProduct.where((product) => product.category == category).toList();
+
     emit(HomePageLoaded(
       filterProduct: filtered,
       selectedCategory: category,
@@ -50,7 +51,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       final beautyProduct = newAllProduct.where((product) => product.category == 'beauty').toList();
       emit(
         HomePageLoaded(
-          filterProduct: beautyProduct.isNotEmpty ? beautyProduct : newAllProduct,
+          filterProduct: state is HomePageLoaded ? beautyProduct : newAllProduct,
           allProduct: newAllProduct,
           selectedCategory: 'beauty',
         ),
@@ -61,40 +62,13 @@ class HomePageCubit extends Cubit<HomePageState> {
               product.title.toLowerCase().startsWith(query.toLowerCase()) ||
               product.category.toLowerCase().startsWith(query.toLowerCase()))
           .toList();
-
       emit(HomePageLoaded(
         filterProduct: filtered,
         allProduct: newAllProduct,
         selectedCategory: null,
-        searchQuery: query,
       ));
+      // print("category: $category+++++++++++++++++++");
     }
-    print("$query+++++++++++++++++++");
+    print("query : $query+++++++++++++++++++");
   }
-
-  //add Cart Product
-  // Future<void> addTOCartProduct(CartModal product) async {
-  //   await cartDbHelper.addToCart(product);
-  //   final products = await cartDbHelper.getCartProduct();
-  //   emit(HomePageLoaded(
-  //     filterProduct: (state as HomePageLoaded).filterProduct,
-  //     cartList: products,
-  //     allProduct: newAllProduct,
-  //     selectedCategory: (state as HomePageLoaded).selectedCategory,
-  //   ));
-  //   // if (state is HomePageLoaded) {
-  //   //   List<ProductModal> newCartList = List.from((state as HomePageLoaded).cartList);
-  //   //   newCartList.add(product);
-  //   //   emit(
-  //   //     HomePageLoaded(
-  //   //       filterProduct: (state as HomePageLoaded).filterProduct,
-  //   //       allProduct: newAllProduct,
-  //   //       cartList: newCartList,
-  //   //       selectedCategory: (state as HomePageLoaded).selectedCategory,
-  //   //     ),
-  //   //   );
-  //   //
-  //   //   print("${newCartList.length}----------------++++++++++++++++++++++++");
-  //   // }
-  // }
 }

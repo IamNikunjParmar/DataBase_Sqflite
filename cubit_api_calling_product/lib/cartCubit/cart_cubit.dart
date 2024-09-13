@@ -15,6 +15,7 @@ class CartCubit extends Cubit<CartState> {
   static const String cartBoxName = 'CartBox';
   final CartDbHelper cartDbHelper = CartDbHelper.cartDbHelper;
 
+  List<CartModal> allProduct = [];
   Future<void> addToCart(int id, CartModal product) async {
     final box = Hive.box<CartModal>(cartBoxName);
     await box.put(product.id, product);
@@ -41,29 +42,27 @@ class CartCubit extends Cubit<CartState> {
 // Quantity Increment Product
   Future<void> incrementQuantity(int id, CartModal product) async {
     final box = Hive.box<CartModal>(cartBoxName);
+    product.quntitey += 1;
+    product.totalPrice = product.price * product.quntitey;
     await box.put(product.id, product);
     final products = await cartDbHelper.getCartProduct();
-    final updatePrice = product.price += product.price;
-    emit(CartLoaded(products: products, quantity: product.quntitey += 1, totalPrice: updatePrice));
+    emit(CartLoaded(products: products, quantity: product.quntitey, totalPrice: product.totalPrice));
 
     print("IncrementQuantity :${product.quntitey} ");
-
-    print("IncrementQuantityPrice :$updatePrice ");
+    print("IncrementQuantityPrice :${product.totalPrice} ");
   }
 
   // Quantity Decrement Product
   Future<void> decrementQuantity(int id, CartModal product) async {
     final box = Hive.box<CartModal>(cartBoxName);
-    await box.put(product.id, product);
 
-    //  print("DecrementUpdatePrice :$updatePrice ");
     if (product.quntitey > 1) {
+      product.quntitey -= 1;
+      product.totalPrice = product.price * product.quntitey;
+      await box.put(product.id, product);
       final products = await cartDbHelper.getCartProduct();
-      final singlePrice = (product.price / product.quntitey);
-      final updatePrice = product.price = singlePrice * (product.quntitey - 1);
-      emit(CartLoaded(products: products, quantity: product.quntitey -= 1, totalPrice: updatePrice));
-
-      print("DecrementUpdatePrice :$updatePrice ");
+      emit(CartLoaded(products: products, quantity: product.quntitey, totalPrice: product.totalPrice));
+      print("DecrementUpdatePrice :${product.totalPrice} ");
     } else {
       await box.delete(product.id);
       final products = await cartDbHelper.getCartProduct();
@@ -72,13 +71,14 @@ class CartCubit extends Cubit<CartState> {
     print("DecrementQuantity :${product.quntitey} ");
   }
 
+  //total price
   totalCartProduct(int id, CartModal product) async {
     final box = Hive.box<CartModal>(cartBoxName);
     await box.put(product.id, product);
     final products = await cartDbHelper.getCartProduct();
     emit(CartLoaded(products: products, totalPrice: product.totalPrice));
 
-    print("ProductPrice : ${product.price}----+++");
+    print("ProductPrice : ${product.totalPrice}----+++");
 
     // print("Total Price : $totalSum-+++++++++++++++++++++++++++++++++");
   }

@@ -83,7 +83,7 @@ class DetailsPageView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    product.title,
+                    product.title.length > 35 ? '${product.title.substring(0, 35)}...' : product.title,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
@@ -93,8 +93,9 @@ class DetailsPageView extends StatelessWidget {
                   Text(
                     "₹${product.price.toString()}",
                     style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: Color(0xff5C0319),
                     ),
                   ),
                 ],
@@ -195,146 +196,165 @@ class DetailsPageView extends StatelessWidget {
                 ],
               ),
               const Gap(5),
-              SizedBox(
-                height: 200, // Set height for reviews section
-                child: ListView.builder(
-                  //physics: const NeverScrollableScrollPhysics(),
-                  itemCount: product.reviews.length,
-                  itemBuilder: (ctx, index) {
-                    List<Review> review = product.reviews;
-                    print("$review------------++++++++++++++++++++++");
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                "Name:",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+              Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: product.reviews.length,
+                    itemBuilder: (ctx, index) {
+                      List<Review> review = product.reviews;
+                      print("$review------------++++++++++++++++++++++");
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  "Name:",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                review[index].reviewerName.toString() ?? 'no',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                                Text(
+                                  review[index].reviewerName.toString() ?? 'no',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "comment:",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "comment:",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                review[index].comment.toString() ?? 'no',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
+                                Text(
+                                  review[index].comment.toString() ?? 'no',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "rating:",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "rating:",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                review[index].rating.toString() ?? 'no',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                                Text(
+                                  review[index].rating.toString() ?? 'no',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        width: 400,
-        padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border.fromBorderSide(
-            BorderSide(
-              width: 0.5,
-            ),
+      bottomNavigationBar: AddToCartWidget(product: product, cartBox: cartBox),
+    );
+  }
+}
+
+class AddToCartWidget extends StatelessWidget {
+  const AddToCartWidget({
+    super.key,
+    required this.product,
+    required this.cartBox,
+  });
+
+  final ProductModal product;
+  final Box<CartModal> cartBox;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      width: 400,
+      padding: const EdgeInsets.all(5),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border.fromBorderSide(
+          BorderSide(
+            width: 0.5,
           ),
         ),
-        child: InkWell(
-          onTap: () async {
-            CartModal newProduct = CartModal(
+      ),
+      child: InkWell(
+        onTap: () async {
+          CartModal newProduct = CartModal(
               id: product.id,
               title: product.title,
               thumbnail: product.thumbnail,
               price: product.price,
               quntitey: 1,
-            );
+              totalPrice: product.price);
 
-            context.read<CartCubit>().addToCart(product.id, newProduct);
+          context.read<CartCubit>().addToCart(product.id, newProduct);
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                duration: Duration(milliseconds: 400),
-                content: Text("Product add to Cart"),
-                showCloseIcon: true,
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-
-            print(product.id);
-            print("CARTBOX:::::::::::::${cartBox.values.length}");
-          },
-          child: Container(
-            height: 25,
-            width: 80,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: Color(0xff5C0319),
-              borderRadius: BorderRadius.all(
-                Radius.circular(5),
-              ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(milliseconds: 400),
+              content: Text("Product add to Cart"),
+              showCloseIcon: true,
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
             ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.shopping_cart,
+          );
+
+          print(product.id);
+          print("CARTBOX:::::::::::::${cartBox.values.length}");
+        },
+        child: Container(
+          height: 25,
+          width: 80,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: Color(0xff5C0319),
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            ),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
+              Gap(8),
+              Text(
+                "Add To Cart",
+                style: TextStyle(
                   color: Colors.white,
+                  fontWeight: FontWeight.w500,
                 ),
-                Gap(8),
-                Text(
-                  "Add To Cart",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -17,6 +17,7 @@ final class HomePageLoaded extends HomePageState {
   final List<ProductModal> filterProduct;
   final String searchQuery;
   final List<ProductModal> cartList;
+  final bool isSelected;
 
   HomePageLoaded({
     this.allProduct = const <ProductModal>[],
@@ -24,6 +25,7 @@ final class HomePageLoaded extends HomePageState {
     required this.filterProduct,
     this.searchQuery = '',
     this.cartList = const <ProductModal>[],
+    this.isSelected = true,
   });
 
   HomePageLoaded copyWith({
@@ -32,6 +34,7 @@ final class HomePageLoaded extends HomePageState {
     List<ProductModal>? filterProduct,
     String? searchQuery,
     List<ProductModal>? cartList,
+    bool? isSelected,
   }) {
     return HomePageLoaded(
       allProduct: allProduct ?? this.allProduct,
@@ -39,12 +42,13 @@ final class HomePageLoaded extends HomePageState {
       filterProduct: filterProduct ?? this.filterProduct,
       searchQuery: searchQuery ?? this.searchQuery,
       cartList: cartList ?? this.cartList,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [allProduct, selectedCategory, filterProduct, searchQuery, cartList];
+  List<Object?> get props => [allProduct, selectedCategory, filterProduct, searchQuery, cartList, isSelected];
 }
 
 final class HomePageError extends HomePageState {

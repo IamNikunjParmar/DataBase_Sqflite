@@ -35,10 +35,10 @@ class CartPageView extends StatelessWidget {
           if (state is CartLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartLoaded) {
-            List<CartModal> newTotal = state.products;
-            double totalPrice = newTotal.fold<double>(0, (sum, item) => sum + item.price);
+            double totalPrice = state.products.fold<double>(0, (sum, item) => sum + (item.price * item.quntitey));
 
-            //print(totalPrice);
+            print("totalPrice :$totalPrice ---++++++++++++++++++++++++++++++");
+
             if (state.products.isEmpty) {
               return const Center(
                   child: Text(
@@ -51,6 +51,8 @@ class CartPageView extends StatelessWidget {
             }
             return Scaffold(
               appBar: AppBar(
+                title: const Text(" My cart"),
+                centerTitle: true,
                 leading: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -149,7 +151,9 @@ class CartPageView extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              cartProduct.title,
+                                              cartProduct.title.length > 30
+                                                  ? '${cartProduct.title.substring(0, 30)}...'
+                                                  : cartProduct.title,
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
@@ -157,7 +161,7 @@ class CartPageView extends StatelessWidget {
                                             ),
                                             const Gap(10),
                                             Text(
-                                              ("\$${cartProduct.price.toString()}"),
+                                              ("\$${cartProduct.totalPrice?.toStringAsFixed(2)}"),
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w900,
@@ -217,25 +221,39 @@ class CartPageView extends StatelessWidget {
                             );
                           }),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Total Price",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "\$${totalPrice.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff5C0319),
-                          ),
-                        ),
-                      ],
+                  ],
+                ),
+              ),
+              bottomNavigationBar: Container(
+                height: 60,
+                width: 400,
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  border: Border.fromBorderSide(
+                    BorderSide(
+                      width: 0.5,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total Price",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "\$${totalPrice.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff5C0319),
+                      ),
                     ),
                   ],
                 ),
