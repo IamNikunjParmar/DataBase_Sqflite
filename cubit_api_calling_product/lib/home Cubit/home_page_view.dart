@@ -25,7 +25,7 @@ class HomePAgeViewCubit extends StatelessWidget {
     return MultiProvider(
       providers: [
         BlocProvider(create: (_) => HomePageCubit()..getAllProduct()),
-        BlocProvider(create: (_) => CartCubit()),
+        BlocProvider(create: (_) => CartCubit()..loadCartProducts()),
       ],
       child: const HomePAgeViewCubit(),
     );
@@ -208,10 +208,11 @@ class HomePAgeViewCubit extends StatelessWidget {
                                             InkWell(
                                               onTap: () async {
                                                 final cartCubit = context.read<CartCubit>();
-                                                final productInCart = state.allProduct.firstWhereOrNull(
+                                                final productInCart = cartCubit.allProduct.firstWhereOrNull(
                                                   (item) => item.id == product.id,
                                                 );
-                                                if (productInCart != null) {
+
+                                                if (productInCart == null) {
                                                   CartModal newProduct = CartModal(
                                                     id: product.id,
                                                     title: product.title,
@@ -247,22 +248,22 @@ class HomePAgeViewCubit extends StatelessWidget {
                                                       child: Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                         children: [
-                                                          IconButton(
-                                                            onPressed: () {
+                                                          GestureDetector(
+                                                            onTap: () {
                                                               context
                                                                   .read<CartCubit>()
                                                                   .decrementQuantity(product.id, cartItem);
                                                             },
-                                                            icon: const Icon(Icons.remove),
+                                                            child: const Icon(Icons.remove),
                                                           ),
                                                           Text("${cartItem.quntitey}"),
-                                                          IconButton(
-                                                            onPressed: () {
+                                                          GestureDetector(
+                                                            onTap: () {
                                                               context
                                                                   .read<CartCubit>()
                                                                   .incrementQuantity(product.id, cartItem);
                                                             },
-                                                            icon: const Icon(Icons.add),
+                                                            child: const Icon(Icons.add),
                                                           ),
                                                         ],
                                                       ),
@@ -273,18 +274,22 @@ class HomePAgeViewCubit extends StatelessWidget {
                                                       height: 30,
                                                       width: 90,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey.withOpacity(0.2),
+                                                        color: const Color(0xff5C0319),
                                                         borderRadius: BorderRadius.circular(10),
                                                       ),
                                                       child: const Text(
                                                         "Add to Cart",
-                                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
                                                     );
                                                   }
                                                 },
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       );

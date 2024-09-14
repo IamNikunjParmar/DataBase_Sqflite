@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:cubit_api_calling_product/modal/product_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -306,56 +307,82 @@ class AddToCartWidget extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          CartModal newProduct = CartModal(
+          final cartCubit = context.read<CartCubit>();
+          final productInCart = cartCubit.allProduct.firstWhereOrNull(
+            (item) => item.id == product.id,
+          );
+
+          if (productInCart == null) {
+            CartModal newProduct = CartModal(
               id: product.id,
               title: product.title,
               thumbnail: product.thumbnail,
               price: product.price,
               quntitey: 1,
-              totalPrice: product.price);
-
-          context.read<CartCubit>().addToCart(product.id, newProduct);
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              duration: Duration(milliseconds: 400),
-              content: Text("Product add to Cart"),
-              showCloseIcon: true,
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-
-          print(product.id);
-          print("CARTBOX:::::::::::::${cartBox.values.length}");
+              totalPrice: product.price,
+            );
+            cartCubit.addToCart(product.id, newProduct);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Product added to cart"),
+              ),
+            );
+          }
         },
-        child: Container(
-          height: 25,
-          width: 80,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: Color(0xff5C0319),
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ),
-              Gap(8),
-              Text(
-                "Add To Cart",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+        child: BlocBuilder<CartCubit, CartState>(
+          builder: (context, state) {
+            final cartItem = context.read<CartCubit>().allProduct.firstWhereOrNull(
+                  (item) => item.id == product.id,
+                );
+
+            if (cartItem != null) {
+              return Container(
+                alignment: AlignmentDirectional.center,
+                height: 30,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              ),
-            ],
-          ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        context.read<CartCubit>().decrementQuantity(product.id, cartItem);
+                      },
+                      child: const Icon(Icons.remove),
+                    ),
+                    Text("${cartItem.quntitey}"),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<CartCubit>().incrementQuantity(product.id, cartItem);
+                      },
+                      child: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Container(
+                alignment: AlignmentDirectional.center,
+                height: 30,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: const Color(0xff5C0319),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  "Add to Cart",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
