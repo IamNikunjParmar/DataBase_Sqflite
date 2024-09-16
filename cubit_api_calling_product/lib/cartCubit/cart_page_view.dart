@@ -36,18 +36,26 @@ class CartPageView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartLoaded) {
             double totalPrice = state.products.fold<double>(0, (sum, item) => sum + (item.price * item.quntitey));
-
             print("totalPrice :$totalPrice ---++++++++++++++++++++++++++++++");
 
             if (state.products.isEmpty) {
-              return const Center(
-                  child: Text(
-                "No Product in the cart",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              return Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.arrow_back)),
                 ),
-              ));
+                body: const Center(
+                    child: Text(
+                  "No Product in the cart",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )),
+              );
             }
             return Scaffold(
               appBar: AppBar(
@@ -70,9 +78,9 @@ class CartPageView extends StatelessWidget {
                             CartModal cartProduct = state.products[index];
 
                             return Slidable(
-                              key: const ValueKey(0),
+                              key: Key(state.products[index].toString()),
                               endActionPane: ActionPane(
-                                dismissible: DismissiblePane(onDismissed: () {}),
+                                // dismissible: DismissiblePane(onDismissed: () {}),
                                 motion: const ScrollMotion(),
                                 children: [
                                   SlidableAction(
@@ -187,9 +195,9 @@ class CartPageView extends StatelessWidget {
                                                     children: [
                                                       InkWell(
                                                         onTap: () {
-                                                          context
-                                                              .read<CartCubit>()
-                                                              .decrementQuantity(cartProduct.id, cartProduct);
+                                                          // context
+                                                          //     .read<CartCubit>()
+                                                          //     .decrementQuantity(cartProduct.id, cartProduct);
                                                         },
                                                         child: const Icon(
                                                           Icons.remove,
@@ -198,9 +206,9 @@ class CartPageView extends StatelessWidget {
                                                       Text(cartProduct.quntitey.toString()),
                                                       InkWell(
                                                         onTap: () {
-                                                          context
-                                                              .read<CartCubit>()
-                                                              .incrementQuantity(cartProduct.id, cartProduct);
+                                                          // context
+                                                          //     .read<CartCubit>()
+                                                          //     .incrementQuantity(cartProduct.id, cartProduct);
                                                         },
                                                         child: const Icon(
                                                           Icons.add,

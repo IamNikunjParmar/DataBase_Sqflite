@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cubit_api_calling_product/modal/cart_modal.dart';
+import 'package:cubit_api_calling_product/modal/product_modal.dart';
 import 'package:hive/hive.dart';
 import 'package:hive/hive.dart';
 import 'package:hive/hive.dart';
@@ -16,55 +17,41 @@ class CartCubit extends Cubit<CartState> {
   final CartDbHelper cartDbHelper = CartDbHelper.cartDbHelper;
 
   List<CartModal> allProduct = [];
+  final box = Hive.box<CartModal>(cartBoxName);
 
   Future<void> getCartProduct() async {
     emit(CartLoading());
-
     allProduct = await cartDbHelper.getCartProduct();
     emit(CartLoaded(products: allProduct));
-
     print("${allProduct.length}=-=============--------------------=");
   }
 
-  // Initialize by loading products from the database
-  Future<void> loadCartProducts() async {
-    emit(CartLoading());
-    allProduct = await cartDbHelper.getCartProduct();
-    emit(CartLoaded(products: allProduct));
-  }
-
-  Future<void> addToCart(int id, CartModal product) async {
-    final box = Hive.box<CartModal>(cartBoxName);
-    await box.put(product.id, product);
-    allProduct = await cartDbHelper.getCartProduct();
-    emit(CartLoaded(products: allProduct));
-  }
-
-  Future<void> incrementQuantity(int id, CartModal product) async {
-    final box = Hive.box<CartModal>(cartBoxName);
-    product.quntitey += 1;
-    product.totalPrice = product.price * product.quntitey;
-    await box.put(product.id, product);
-    allProduct = await cartDbHelper.getCartProduct();
-    emit(CartLoaded(products: allProduct, quantity: product.quntitey, totalPrice: product.totalPrice));
-  }
-
-  Future<void> decrementQuantity(int id, CartModal product) async {
-    final box = Hive.box<CartModal>(cartBoxName);
-    if (product.quntitey > 1) {
-      product.quntitey -= 1;
-      product.totalPrice = product.price * product.quntitey;
-      await box.put(product.id, product);
+  Future<void> addToCart(ProductModal product) async {
+    final existingProduct = box.get(product.id);
+    if (existingProduct != null) {
     } else {
-      await box.delete(product.id);
+      CartModal newProduct = CartModal(
+        id: product.id,
+        title: product.title,
+        thumbnail: product.thumbnail,
+        price: product.price,
+        quntitey: 1,
+        totalPrice: product.price,
+      );
+      await box.put(product.id, newProduct);
+      emit(UpdateCartProduct(products: newProduct));
     }
-    allProduct = await cartDbHelper.getCartProduct();
-    emit(CartLoaded(products: allProduct, quantity: product.quntitey, totalPrice: product.totalPrice));
   }
+
+  updateQuantityFromCubit() {}
 
   Future<void> removeProduct(int productId) async {
-    await cartDbHelper.removeCartProduct(productId);
-    allProduct = await cartDbHelper.getCartProduct();
+    await box.delete(productId);
+    allProduct.removeWhere((element) => element.id == productId);
     emit(CartLoaded(products: allProduct));
+  }
+
+  Stream<BoxEvent> watchCart() {
+    return box.watch();
   }
 }

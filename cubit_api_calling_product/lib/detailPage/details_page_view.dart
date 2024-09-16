@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:cubit_api_calling_product/home%20Cubit/home_page_cubit.dart';
 import 'package:cubit_api_calling_product/modal/product_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 import '../cartCubit/cart_cubit.dart';
 import '../cartCubit/cart_page_view.dart';
@@ -17,7 +19,12 @@ class DetailsPageView extends StatelessWidget {
   static const String routeName = 'details_page_view';
 
   static Widget builder(BuildContext context) {
-    return const DetailsPageView();
+    return MultiProvider(
+      providers: [
+        BlocProvider(create: (_) => HomePageCubit()..getAllProduct()),
+      ],
+      child: const DetailsPageView(),
+    );
   }
 
   @override
@@ -321,12 +328,7 @@ class AddToCartWidget extends StatelessWidget {
               quntitey: 1,
               totalPrice: product.price,
             );
-            cartCubit.addToCart(product.id, newProduct);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Product added to cart"),
-              ),
-            );
+            // cartCubit.addToCart(newProduct);
           }
         },
         child: BlocBuilder<CartCubit, CartState>(
@@ -349,14 +351,14 @@ class AddToCartWidget extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<CartCubit>().decrementQuantity(product.id, cartItem);
+                        // context.read<CartCubit>().decrementQuantity(product.id, cartItem);
                       },
                       child: const Icon(Icons.remove),
                     ),
                     Text("${cartItem.quntitey}"),
                     GestureDetector(
                       onTap: () {
-                        context.read<CartCubit>().incrementQuantity(product.id, cartItem);
+                        // context.read<CartCubit>().incrementQuantity(product.id, cartItem);
                       },
                       child: const Icon(Icons.add),
                     ),
