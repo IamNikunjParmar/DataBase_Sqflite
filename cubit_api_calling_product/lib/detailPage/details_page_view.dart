@@ -312,61 +312,49 @@ class AddToCartWidget extends StatelessWidget {
           ),
         ),
       ),
-      child: InkWell(
-        onTap: () async {
-          final cartCubit = context.read<CartCubit>();
-          final productInCart = cartCubit.allProduct.firstWhereOrNull(
-            (item) => item.id == product.id,
-          );
-
-          if (productInCart == null) {
-            CartModal newProduct = CartModal(
-              id: product.id,
-              title: product.title,
-              thumbnail: product.thumbnail,
-              price: product.price,
-              quntitey: 1,
-              totalPrice: product.price,
+      child: StreamBuilder<BoxEvent>(
+        stream: cartBox.watch(key: product.id),
+        builder: (context, snapshot) {
+          final cartItem = cartBox.get(product.id);
+          if (cartItem != null) {
+            return Container(
+              alignment: AlignmentDirectional.center,
+              height: 30,
+              width: 90,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      context.read<CartCubit>().decrementProductQuantity(cartItem);
+                    },
+                    child: const Icon(Icons.remove),
+                  ),
+                  Text("${cartItem.quntitey}"),
+                  GestureDetector(
+                    onTap: () {
+                      context.read<CartCubit>().incrementProductQuantity(cartItem);
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
             );
-            // cartCubit.addToCart(newProduct);
-          }
-        },
-        child: BlocBuilder<CartCubit, CartState>(
-          builder: (context, state) {
-            final cartItem = context.read<CartCubit>().allProduct.firstWhereOrNull(
-                  (item) => item.id == product.id,
+          } else {
+            return GestureDetector(
+              onTap: () {
+                context.read<CartCubit>().addToCart(product);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Product added to cart"),
+                  ),
                 );
-
-            if (cartItem != null) {
-              return Container(
-                alignment: AlignmentDirectional.center,
-                height: 30,
-                width: 90,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // context.read<CartCubit>().decrementQuantity(product.id, cartItem);
-                      },
-                      child: const Icon(Icons.remove),
-                    ),
-                    Text("${cartItem.quntitey}"),
-                    GestureDetector(
-                      onTap: () {
-                        // context.read<CartCubit>().incrementQuantity(product.id, cartItem);
-                      },
-                      child: const Icon(Icons.add),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
+              },
+              child: Container(
                 alignment: AlignmentDirectional.center,
                 height: 30,
                 width: 90,
@@ -382,10 +370,10 @@ class AddToCartWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

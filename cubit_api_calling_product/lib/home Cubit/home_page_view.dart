@@ -223,14 +223,18 @@ class HomePAgeViewCubit extends StatelessWidget {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // Handle decrement quantity
+                                                            context
+                                                                .read<CartCubit>()
+                                                                .decrementProductQuantity(cartItem);
                                                           },
                                                           child: const Icon(Icons.remove),
                                                         ),
                                                         Text("${cartItem.quntitey}"),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            // Handle increment quantity
+                                                            context
+                                                                .read<CartCubit>()
+                                                                .incrementProductQuantity(cartItem);
                                                           },
                                                           child: const Icon(Icons.add),
                                                         ),
