@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "376696690673",
+    "project_id": "cloud-firebase-demo-2270c",
+    "storage_bucket": "cloud-firebase-demo-2270c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376696690673:android:a559e41076351f95abd650",
+        "android_client_info": {
+          "package_name": "com.example.cloud_database_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACgji70GchlU51rVTAXe_M1PilWyARyT8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
