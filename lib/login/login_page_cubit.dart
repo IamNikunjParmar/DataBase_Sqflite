@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:toastification/toastification.dart';
 
 import '../helper/fb_auth_helper.dart';
+import '../logger/logger.dart';
 
 part 'login_page_state.dart';
 
@@ -14,20 +15,23 @@ class LoginPageCubit extends Cubit<LoginPageState> {
 
   final logger = Logger();
 
+  bool password = false;
+
   Future<void> loginWithEmailAndPassword({required String email, required String password}) async {
     try {
       final result = await FbAuthHelper.fbAuthHelper.loginEmailAndPassword(
         email: email,
         password: password,
       );
-      if (result == 'success') {
+      if (result!.contains('success')) {
+        Log.success("success");
         toastification.show(
           autoCloseDuration: const Duration(
-            milliseconds: 200,
+            seconds: 3,
           ),
-          title: const Text(
-            'Login Success',
-            style: TextStyle(
+          title: Text(
+            result,
+            style: const TextStyle(
               color: Colors.white,
             ),
           ),
@@ -45,7 +49,7 @@ class LoginPageCubit extends Cubit<LoginPageState> {
             seconds: 3,
           ),
           title: Text(
-            result ?? '',
+            result ?? "unknown Error occurred",
             style: const TextStyle(
               color: Colors.white,
             ),
@@ -59,7 +63,7 @@ class LoginPageCubit extends Cubit<LoginPageState> {
         );
       }
     } catch (e) {
-      logger.e("Cubit Error :: $e");
+      logger.e(" Login Cubit Error :: $e");
       emit(state.copyWith(error: e.toString()));
     }
   }

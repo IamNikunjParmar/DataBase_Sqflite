@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:toastification/toastification.dart';
 
+import '../custom Widget/email_text_field.dart';
+import '../custom Widget/password_text_field.dart';
 import '../sign In/sing_in_page_cubit.dart';
 
 class LoginPageView extends StatelessWidget {
@@ -25,8 +27,11 @@ class LoginPageView extends StatelessWidget {
 
   GlobalKey<FormState> loginKey = GlobalKey<FormState>();
 
+  User? user = FbAuthHelper.fbAuthHelper.firebaseAuth.currentUser;
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -54,30 +59,12 @@ class LoginPageView extends StatelessWidget {
                 key: loginKey,
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: "email",
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                      ),
+                    EmailTextFormField(
+                      emailController: emailController,
                     ),
                     const Gap(20),
-                    TextField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(
-                        labelText: "password",
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                      ),
+                    PasswordTextFormField(
+                      passwordController: passwordController,
                     ),
                     const Gap(30),
                     SizedBox(
@@ -89,13 +76,27 @@ class LoginPageView extends StatelessWidget {
                         ),
                         onPressed: () async {
                           User? user = FbAuthHelper.fbAuthHelper.firebaseAuth.currentUser;
-                          context.read<LoginPageCubit>().loginWithEmailAndPassword(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              );
-                          //Navigator.of(context).pushReplacementNamed(HomePageView.routeName, arguments: user);
-                          emailController.clear();
-                          passwordController.clear();
+                          if (loginKey.currentState!.validate()) {
+                            context
+                                .read<LoginPageCubit>()
+                                .loginWithEmailAndPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                )
+                                .then(
+                              (value) {
+                                if (context.mounted) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      (user != null) ? HomePageView.routeName : LoginPageView.routeName,
+                                      (route) => false,
+                                      arguments: user);
+                                }
+                                emailController.clear();
+                                passwordController.clear();
+                              },
+                            );
+                          }
                         },
                         child: const Text(
                           "Login Now",
@@ -114,7 +115,7 @@ class LoginPageView extends StatelessWidget {
                         const Gap(5),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).pushNamed(SignInPageView.routeName);
+                            Navigator.pushNamed(context, SignInPageView.routeName);
                           },
                           child: const Text(
                             "Sign Up",

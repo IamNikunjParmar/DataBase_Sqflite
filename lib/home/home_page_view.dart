@@ -1,5 +1,6 @@
 import 'package:cloud_database_demo/home/add_user_page.dart';
 import 'package:cloud_database_demo/home/home_page_cubit.dart';
+import 'package:cloud_database_demo/login/login_page_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +33,29 @@ class HomePageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 80,
+        title: Text(
+          " ${user?.email ?? 'email not found'}",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              FbAuthHelper.fbAuthHelper.logOutUser().then(
+                (value) {
+                  Navigator.of(context).pushReplacementNamed(LoginPageView.routeName);
+                },
+              );
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -55,7 +79,6 @@ class HomePageView extends StatelessWidget {
                 },
               ),
             ),
-            //  Text("User Email : ${user?.email ?? 'email not found'}"),
           ],
         ),
       ),
