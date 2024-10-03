@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           create: (context) => SingInPageCubit(context),
         ),
         BlocProvider(
-          create: (context) => LoginPageCubit(),
+          create: (context) => LoginPageCubit(context),
         ),
       ],
       child: ToastificationWrapper(

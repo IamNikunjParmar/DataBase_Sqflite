@@ -20,7 +20,7 @@ class LoginPageView extends StatelessWidget {
 
   static Widget builder(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginPageCubit(),
+      create: (context) => LoginPageCubit(context),
       child: LoginPageView(),
     );
   }
@@ -42,8 +42,9 @@ class LoginPageView extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(15),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Gap(50),
+              // const Gap(50),
               const Center(
                 child: Text(
                   "Login Here",
@@ -85,13 +86,7 @@ class LoginPageView extends StatelessWidget {
                                 )
                                 .then(
                               (value) {
-                                if (context.mounted) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      (user != null) ? HomePageView.routeName : LoginPageView.routeName,
-                                      (route) => false,
-                                      arguments: user);
-                                }
+                                if (context.mounted) {}
                                 emailController.clear();
                                 passwordController.clear();
                               },
@@ -107,7 +102,7 @@ class LoginPageView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Gap(20),
+                    const Gap(15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -131,6 +126,51 @@ class LoginPageView extends StatelessWidget {
                   ],
                 ),
               ),
+              const Gap(30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      context.read<LoginPageCubit>().googleWithLogin();
+                    },
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Transform.scale(
+                        scale: 0.8,
+                        child: const Image(
+                          image: AssetImage('assets/images/google logo.png'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  InkWell(
+                    onTap: () {
+                      context.read<LoginPageCubit>().facebookLogin();
+                    },
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Transform.scale(
+                        scale: 0.9,
+                        child: const Image(
+                          image: AssetImage('assets/images/facebook.png'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
